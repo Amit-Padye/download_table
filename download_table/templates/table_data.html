@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<style>
+        .button {
+  padding: 7px 10-px;
+  font-size: 15px;
+  text-align: center;
+  cursor: pointer;
+  outline: none;
+  color: #fff;
+  background-color: #1E90FF;
+  border: none;
+}
+
+.button:hover {background-color: #00008B}
+
+.button:active {
+  background-color: #00008B;
+  box-shadow: 0 5px #666;
+  transform: translateY(2px);
+}
+form{
+       display: inline;
+     }
+
+    </style>
+</head>
+<body>
+	<p>
+		<center>
+			<h1 id="title" style="color:blue;">News Detail</h1>
+			<table border="1" cellspacing="0" cellpadding="5">    
+				<tr>
+					<th>News date</th>
+					<th>News source</th>
+					<th>News title</th> 
+					<th>News link</th>
+					<th>Company Name</th>
+					<th>Sentiment</th> 
+					<th>Sentiment Score</th>
+					
+				</tr>
+			 {% for results in data %}
+			 <tr>
+				 <td>{{results.newsdate}}</td>
+				 <td>{{results.newssource}}</td>
+				 <td>{{results.newstitle}}</td>
+				 <td><a href= {{results.newsurl}}  target="_blank"> Link</a></td>
+				 <td>{{results.companyname}}</td>
+				 <td>{{results.sentiment}}</td>
+				 <td>{{results.sentimentscore}}</td>
+				 {% endfor %}
+			</tr>
+			 </table>
+             <div>
+			 <br><br>
+			 <button class="button" type="button" onclick="tableToCSV()">
+				 Download
+			 </button>
+
+			 <form action="{% url 'index' %}" method="POST">
+				{% csrf_token %}
+				<button class="button" type="submit">Back</button>
+			</form>
+		    </div>
+		</center>
+		</p>
+
+	<script type="text/javascript">
+		function tableToCSV() {
+
+			// Variable to store the final csv data
+			var csv_data = [];
+
+			// Get each row data
+			var rows = document.getElementsByTagName('tr');
+			for (var i = 0; i < rows.length; i++) {
+
+				// Get each column data
+				var cols = rows[i].querySelectorAll('td,th');
+
+				// Stores each csv row data
+				var csvrow = [];
+				for (var j = 0; j < cols.length; j++) {
+
+					// Get the text data of each cell
+					// of a row and push it to csvrow
+					if (j == 3 && i != 0) {
+						let x=cols[j].innerHTML
+						csvrow.push((x.split('"')[1]))
+					}
+					else{
+						csvrow.push(cols[j].innerHTML);
+					}
+
+				}
+
+				// Combine each column value with comma
+				csv_data.push(csvrow.join(","));
+				
+			}
+
+			// Combine each row data with new line character
+			csv_data = csv_data.join('\n');
+			console.log()
+
+			// Call this function to download csv file
+			downloadCSVFile(csv_data);
+
+		}
+
+		function downloadCSVFile(csv_data) {
+
+			// Create CSV file object and feed
+			// our csv_data into it
+			CSVFile = new Blob([csv_data], {
+				type: "text/csv"
+			});
+
+			// Create to temporary link to initiate
+			// download process
+			var temp_link = document.createElement('a');
+
+			// Download csv file
+			var date = new Date();
+			date.setDate(date.getDate() - 1);
+			date=date.toISOString().slice(0, 10);
+
+			temp_link.download = "news_detail_" + date + ".csv";
+			var url = window.URL.createObjectURL(CSVFile);
+			temp_link.href = url;
+
+			// This link should not be displayed
+			temp_link.style.display = "none";
+			document.body.appendChild(temp_link);
+
+			// Automatically click the link to
+			// trigger download
+			temp_link.click();
+			document.body.removeChild(temp_link);
+		}
+	</script>
+</body>
+
+</html>

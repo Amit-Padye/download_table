@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>Table</title>
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+.button {
+  padding: 7px 10-px;
+  font-size: 20px;
+  text-align: center;
+  cursor: pointer;
+  outline: none;
+  color: #fff;
+  background-color: #1E90FF;
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 4px #999;
+}
+
+.button:hover {background-color: #3e8e41}
+
+.button:active {
+  background-color: #3e8e41;
+  box-shadow: 0 5px #666;
+  transform: translateY(2px);
+}
+form{
+       display: inline;
+     }
+
+</style>
+   </head>
+<body>  
+
+<form name="theform" method="POST" enctype='multipart/form-data'  id='user_input' action="table_data">
+    {% csrf_token %}
+    <div>
+    <label>
+      <b>Start Date</b>:
+      <input  type="date" name="start_date" id="start_date">
+    </label>
+    </div>
+
+    <p>
+        <label>
+          <b>End Date</b>:
+          <input  type="date"  name="end_date" id="end_date" >
+        </label>
+    </p>
+
+    <div>
+    <label>
+        <b>Company Name</b>:
+        <input type="text" name="company_Name" id="company_Name">
+      </label>
+    <br><br>
+    <button class=button id="submitbutton" type="submit" name="project_submit" >Search</button>
+  </form>
+  
+  </div>
+        <script>
+          var date = new Date();
+          date.setDate(date.getDate() - 1);
+          date=date.toISOString().slice(0, 10);
+          document.getElementById('end_date').value = date;
+          document.getElementById('start_date').value = date;
+
+        </script>
+</body>
+</html>
